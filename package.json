@@ -8,7 +8,6 @@
     "build": "webpack -d --watch",
     "prod": "webpack -p",
     "test": "jest "
-
   },
   "author": "Sarah's Minions Project Catwalk",
   "license": "ISC",
@@ -46,6 +45,8 @@
     "cors": "^2.8.5",
     "express": "^4.15.4",
     "firebase": "^8.2.10",
+    "mongodb": "^3.6.5",
+    "mongoose": "^5.12.0",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.7",
     "prop-types": "^15.7.2",

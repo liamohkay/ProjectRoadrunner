@@ -71,12 +71,14 @@ const saveMeta = (reviewsDF, charMergeDF, product_id) => {
   let ratings = createRatings(reviewsDF, product_id);
   let recommended = createRecommended(reviewsDF, product_id);
   let characteristics = createCharacterstics(charMergeDF, product_id);
+
   let metaInstance = new Metadata({
     product_id,
     ratings,
     recommended,
     characteristics
   });
+
   // Save instance to DB
   metaInstance.save(err => {
     if (err) {
@@ -93,6 +95,21 @@ const reviewsSchema = mongoose.Schema({
   results: []
 });
 const Review = mongoose.model('Review', metaSchema);
+
+const createPhotos = (photosDF, review_id) => {
+  let photos = photosDF.filter(row => row.get('review_id') === review_id)
+  let photoIDs = photos.unique('id').toArray();
+  let results = [];
+
+  photoIDs.map(id => {
+    let photo = photos.filter(row => row.get('id') === id[0]).toDict();
+    results.push({
+      id: Number(id[0]),
+      url: photo.url[0]
+    });
+  });
+  return results;
+}
 
 const createResults = (reviewsDF, product_id) => {
   let reviews = reviewsDF.filter(row => row.get('product_id') === product_id);
@@ -113,7 +130,6 @@ const createResults = (reviewsDF, product_id) => {
       photos: []
     })
   });
-
   return results;
 };
 
@@ -132,7 +148,7 @@ csvToDF('../data/cReviewsTest.csv', ['id', 'characteristic_id', 'review_id', 'va
   csvToDF('../data/rPhotoTest.csv', ['id','review_id', 'url'], photosDF => {
     csvToDF('../data/cTest.csv', ['id', 'product_id', 'name'], charsDF => {
       csvToDF('../data/rTest.csv', reviewsCols , reviewsDF => {
-        reviewsDF.show();
+        // reviewsDF.show();
         // ratingsDF.show();
         // photosDF.show();
         // charsDF.show();
@@ -154,7 +170,7 @@ csvToDF('../data/cReviewsTest.csv', ['id', 'characteristic_id', 'review_id', 'va
         charsDF = charsDF.rename('id', 'characteristic_id');
         let charMergeDF = charsDF.join(charsReviewsDF, 'characteristic_id', 'inner')
 
-        createResults(reviewsDF, '1');
+        createPhotos(photosDF, '5');
         // Create indexes for each collection
         // saveMeta(reviewsDF, charMergeDF, '1');
         // Metadata.collection.createIndex({ product_id: -1 })

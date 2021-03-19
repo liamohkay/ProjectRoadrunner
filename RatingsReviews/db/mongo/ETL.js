@@ -176,6 +176,13 @@ csvToDF('../data/cReviewsTest.csv', ['id', 'characteristic_id', 'review_id', 'va
         charsDF = charsDF.rename('id', 'characteristic_id');
         let charMergeDF = charsDF.join(charsReviewsDF, 'characteristic_id', 'inner')
 
+        // Create db instances for every product id + store
+        let productIDs = reviewsDF.unique('product_id').toArray();
+        productIDs.slice(0, 5).map(id => {
+          saveMeta(reviewsDF, charMergeDF, id[0]);
+          saveReviews(reviewsDF, photosDF, id[0]);
+        });
+
         // saveReviews(reviewsDF, photosDF, '2');
         // Create indexes for each collection
         // saveMeta(reviewsDF, charMergeDF, '1');

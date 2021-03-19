@@ -1,39 +1,11 @@
+/* ---------------------
+Dependencies + Libraries
+--------------------- */
 const fs = require('fs');
 const parse = require('csv-parse');
 const mongoose = require('mongoose');
 const DataFrame = require('dataframe-js').DataFrame;
 const port = 27017;
-
-// Connect to db
-mongoose.connect(`mongodb://localhost/SDC`, { useNewUrlParser: true } );
-const db = mongoose.connection;
-db.on('error', () => console.log(`FAILED: Can't connect to db on port: ${port}`));
-db.once('open', () => console.log(`SUCCESS: Connected to db on port: ${port}`));
-
-// Mongoose schema
-// const metaSchema = mongoose.Schema({
-//   product_id: Number,
-//   recommended: {
-//     0: Number,
-//     1: Number
-//   },
-//   ratings: {
-//     5: Number,
-//     4: Number,
-//     3: Number,
-//     2: Number,
-//     1: Number
-//   },
-//   characteristics: {}
-// });
-const metaSchema = mongoose.Schema({
-  product_id: String,
-  recommended: {},
-  ratings: {},
-  characteristics: {}
-});
-
-const Metadata = mongoose.model('Metadata', metaSchema);
 const reviewsCols = [
   'id',
   'product_id',
@@ -49,19 +21,26 @@ const reviewsCols = [
   'helpfulness'
 ];
 
-// Reads in csv file as readstream & returns dataframe class of csv data
-const csvToDF = (filepath, colnames, callback) => {
-  let chunks = [];
-  fs.createReadStream(filepath)
-    .on('error', (err) => console.log(err))
-    .pipe(parse())
-    .on('data', (row) => chunks.push(row))
-    .on('end', () => callback(new DataFrame(chunks, colnames)))
-}
+// Connect to db
+// mongoose.connect(`mongodb://localhost/SDC`, { useNewUrlParser: true } );
+// const db = mongoose.connection;
+// db.on('error', () => console.log(`FAILED: Can't connect to db on port: ${port}`));
+// db.once('open', () => console.log(`SUCCESS: Connected to db on port: ${port}`));
+
+/* -----------------------------------------------
+Metadata collection schema + load helper functions
+----------------------------------------------- */
+const metaSchema = mongoose.Schema({
+  product_id: String,
+  recommended: {},
+  ratings: {},
+  characteristics: {}
+});
+const Metadata = mongoose.model('Metadata', metaSchema);
 
 // Creates product_id indexed nested obj w/ all characterstic names + ratings
-const createCharacterstics = (charMergeDF, productID) => {
-  charMergeDF = charMergeDF.filter(row => row.get('product_id') === productID).toDict();
+const createCharacterstics = (charMergeDF, product_id) => {
+  charMergeDF = charMergeDF.filter(row => row.get('product_id') === product_id).toDict();
   return {
     name: charMergeDF.name,
     id: charMergeDF.characteristic_id,
@@ -79,8 +58,8 @@ const createRatings = (reviewsDF, productID) => {
 }
 
 // Creates recommended obj for metadata schema
-const createRecommended = (reviewsDF, productID) => {
-  let recommended = reviewsDF.filter(row => row.get('product_id') === productID).toDict();
+const createRecommended = (reviewsDF, product_id) => {
+  let recommended = reviewsDF.filter(row => row.get('product_id') === product_id).toDict();
   return {
     reviewID: recommended.id,
     recommend: recommended.recommend
@@ -98,23 +77,62 @@ const saveMeta = (reviewsDF, charMergeDF, product_id) => {
     recommended,
     characteristics
   });
-
+  // Save instance to DB
   metaInstance.save(err => {
     if (err) {
       console.log(err);
     }
   });
 };
-// console.log(JSON.stringify(ratings));
-// console.log(JSON.stringify(recommended));
-// console.log(JSON.stringify(metaInstance));
+
+/* ----------------------------------------------
+Reviews collection schema + load helper functions
+---------------------------------------------- */
+const reviewsSchema = mongoose.Schema({
+  product_id: String,
+  results: []
+});
+const Review = mongoose.model('Review', metaSchema);
+
+const createResults = (reviewsDF, product_id) => {
+  let reviews = reviewsDF.filter(row => row.get('product_id') === product_id);
+  let reviewIDs = reviews.unique('id').toArray();
+  let results = [];
+
+  reviewIDs.map(id => {
+    let review = reviews.filter(row => row.get('id') === id[0]).toDict();
+    results.push({
+      review_id: review.id[0],
+      rating: review.rating[0],
+      summary: review.summary[0],
+      response: review.response[0],
+      body: review.body[0],
+      date: review.date[0],
+      reviewer_name: review.reviewer_name[0],
+      helpfulness: review.helpfulness[0],
+      photos: []
+    })
+  });
+
+  return results;
+};
+
+// Reads in csv file as readstream & returns dataframe class of csv data
+const csvToDF = (filepath, colnames, callback) => {
+  let chunks = [];
+  fs.createReadStream(filepath)
+    .on('error', (err) => console.log(err))
+    .pipe(parse())
+    .on('data', (row) => chunks.push(row))
+    .on('end', () => callback(new DataFrame(chunks, colnames)))
+}
 
 // Import all csv files as dataframes
 csvToDF('../data/cReviewsTest.csv', ['id', 'characteristic_id', 'review_id', 'values'], charsReviewsDF => {
   csvToDF('../data/rPhotoTest.csv', ['id','review_id', 'url'], photosDF => {
     csvToDF('../data/cTest.csv', ['id', 'product_id', 'name'], charsDF => {
       csvToDF('../data/rTest.csv', reviewsCols , reviewsDF => {
-        // reviewsDF.show();
+        reviewsDF.show();
         // ratingsDF.show();
         // photosDF.show();
         // charsDF.show();
@@ -132,18 +150,20 @@ csvToDF('../data/cReviewsTest.csv', ['id', 'characteristic_id', 'review_id', 'va
           row => row.set('response', row.get('response') === '' ? null : row.get('response'))
         )
 
-        // Merge data for meta schema
+        // Merge data for metadata schema
         charsDF = charsDF.rename('id', 'characteristic_id');
         let charMergeDF = charsDF.join(charsReviewsDF, 'characteristic_id', 'inner')
-        // console.log(JSON.stringify(createRecommended(reviewsDF, '1')));
 
-        saveMeta(reviewsDF, charMergeDF, '1');
+        createResults(reviewsDF, '1');
+        // Create indexes for each collection
+        // saveMeta(reviewsDF, charMergeDF, '1');
+        // Metadata.collection.createIndex({ product_id: -1 })
       })
     });
   });
 });
 
- // reviewIDs.map(id => {
+// reviewIDs.map(id => {
 //   let names = reviewDF.unique('name').toArray();
 //   let reviewIDs = productDF.unique('review_id').toArray();
 

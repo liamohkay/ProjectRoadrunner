@@ -60,42 +60,12 @@ mongoose.connection.on('open', (err, conn) => {
 });
 
 
-// /* -------------------------------------
-// Import photos CSV & upload to collection
-// ------------------------------------- */
-// const photoSchema = mongoose.Schema({
-//   id: Number,
-//   review_id: Number,
-//   name: String
-// });
-// const Photo = mongoose.model('Photo', photoSchema);
 
-// byline(fs.createReadStream('../data/reviews_photos.csv', { encoding: 'utf8' }))
 //   .on('error', (err) => console.log(err))
 //   .on('data', (row) => saveRow(row, photoSchema, Photo))
 //   .on('end', () => console.log("Completed photos collection"))
 
-// /* -------------------------------------
-// Import reviews CSV & upload to collection
-// ------------------------------------- */
-// const reviewSchema = mongoose.Schema({
-//   id: Number,
-//   product_id: String,
-//   rating: Number,
-//   date: String,
-//   summary: String,
-//   body: String,
-//   recommend: Boolean,
-//   reported: Boolean,
-//   reviewer_name: String,
-//   reviewer_email: String,
-//   response: String,
-//   helpfulness: Number
-// });
-// const Review = mongoose.model('Review', reviewSchema);
 
-
-// byline(fs.createReadStream('../data/reviews.csv', { encoding: 'utf8' }))
 //   .on('error', (err) => console.log(err))
 //   .on('data', (row) => {
 //     let instance = {};

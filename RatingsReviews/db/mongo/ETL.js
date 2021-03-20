@@ -91,11 +91,11 @@ const saveMeta = (reviewsDF, charMergeDF, product_id) => {
 /* ----------------------------------------------
 Reviews collection schema + load helper functions
 ---------------------------------------------- */
-const reviewsSchema = mongoose.Schema({
-  product_id: String,
-  results: []
-});
-const Review = mongoose.model('Review', reviewsSchema);
+// const reviewsSchema = mongoose.Schema({
+//   product_id: String,
+//   results: []
+// });
+// const Review = mongoose.model('Review', reviewsSchema);
 
 // Given an review_id, returns array of objects containing review picture URLs
 const createPhotos = (photosDF, review_id) => {
@@ -198,11 +198,9 @@ Import characteristic reviews CSV & upload to collection
 //   .on('data', (row) => saveRow(row, charReviewSchema, CharactersticReview))
 //   .on('end', () => console.log("Completed characteristic reviews collection"))
 
-
 /* ----------------------------------------------
 Import characteristics CSV & upload to collection
 ---------------------------------------------- */
-// fs.createReadStream('../data/characteristic_reviews.csv')
 // const charSchema = mongoose.Schema({
 //   id: Number,
 //   product_id: String,
@@ -216,23 +214,63 @@ Import characteristics CSV & upload to collection
 //   .on('data', (row) => saveRow(row, charSchema, Characterstic))
 //   .on('end', () => console.log("Completed characteristics collection"))
 
-/* ----------------------------------------------
-Import characteristics CSV & upload to collection
----------------------------------------------- */
-// fs.createReadStream('../data/characteristic_reviews.csv')
-// const charSchema = mongoose.Schema({
+/* -------------------------------------
+Import photos CSV & upload to collection
+------------------------------------- */
+// const photoSchema = mongoose.Schema({
 //   id: Number,
-//   product_id: String,
+//   review_id: Number,
 //   name: String
 // });
-// const Characterstic = mongoose.model('Characteristic', charSchema);
+// const Photo = mongoose.model('Photo', photoSchema);
 
 // fs.createReadStream('../data/cTest.csv')
 //   .pipe(parse())
 //   .on('error', (err) => console.log(err))
-//   .on('data', (row) => saveRow(row, charSchema, Characterstic))
-//   .on('end', () => console.log("Completed characteristics collection"))
+//   .on('data', (row) => saveRow(row, photoSchema, Photo))
+//   .on('end', () => console.log("Completed photos collection"))
 
+/* -------------------------------------
+Import reviews CSV & upload to collection
+------------------------------------- */
+const reviewSchema = mongoose.Schema({
+  id: Number,
+  product_id: String,
+  rating: Number,
+  date: String,
+  summary: String,
+  body: String,
+  recommend: Boolean,
+  reported: Boolean,
+  reviewer_name: String,
+  reviewer_email: String,
+  response: String,
+  helpfulness: Number
+});
+const Review = mongoose.model('Review', reviewSchema);
+
+fs.createReadStream('../data/rTest.csv')
+  .pipe(parse())
+  .on('error', (err) => console.log(err))
+  .on('data', (row) => {
+    let instance = {};
+    Object.keys(Object.values(reviewSchema)[0]).map((key, i) => instance[key] = row[i]);
+
+    // Clean up a few rows
+    instance.recommend = instance.recommend === 'TRUE' || instance.recommend === '1' ? 1 : 0;
+    instance.reported = instance.reported === 'TRUE' || instance.recommend === '1' ? 1 : 0;
+    instance.response = instance.response === '' || instance.recommend === '1' ? null : instance.response;
+
+    let document = new Review(instance);
+    document.save(err => {
+      if (err) {
+        console.log(err);
+      }
+    });
+
+
+  })
+  .on('end', () => console.log("Completed review collection"))
 
 
 

@@ -59,20 +59,6 @@ mongoose.connection.on('open', (err, conn) => {
     });
 });
 
-/* ----------------------------------------------
-Import characteristics CSV & upload to collection
----------------------------------------------- */
-// const charSchema = mongoose.Schema({
-//   id: Number,
-//   product_id: String,
-//   name: String
-// });
-// const Characterstic = mongoose.model('Characteristic', charSchema);
-
-// byline(fs.createReadStream('../data/characteristics.csv', { encoding: 'utf8' }))
-//   .on('error', (err) => console.log(err))
-//   .on('data', (row) => saveRow(row, charSchema, Characterstic))
-//   .on('end', () => console.log("Completed characteristics collection"))
 
 // /* -------------------------------------
 // Import photos CSV & upload to collection

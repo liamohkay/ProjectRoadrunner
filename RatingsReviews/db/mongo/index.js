@@ -1,4 +1,3 @@
-
 const mongoose = require('mongoose');
 const port = 27017;
 
@@ -22,8 +21,4 @@ const reviewsSchema = mongoose.Schema({
 });
 const Review = mongoose.model('Review', reviewsSchema);
 
-module.exports = {
-  db,
-  Metadata,
-  Review
-};
+module.exports = db;

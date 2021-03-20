@@ -150,48 +150,103 @@ const saveReviews = (reviewsDF, photosDF, product_id) => {
   })
 };
 
-// Reads in csv file as readstream & returns dataframe class of csv data
-const csvToDF = (filepath, colnames, callback) => {
-  let chunks = [];
-  fs.createReadStream(filepath)
-    .on('error', (err) => console.log(err))
-    .pipe(parse())
-    .on('data', (row) => chunks.push(row))
-    .on('end', () => callback(new DataFrame(chunks, colnames)))
+// Helper function that saves rows to mongo collection
+const saveRow = (row, schema, Class) => {
+  let instance = {};
+  Object.keys(Object.values(schema)[0]).map((key, i) => instance[key] = row[i]);
+  let document = new Class(instance);
+  document.save(err => {
+    if (err) {
+      console.log(err);
+    }
+  });
 }
 
+/* -----------------------------------------------------
+Import characteristic reviews CSV & upload to collection
+----------------------------------------------------- */
 // fs.createReadStream('../data/characteristic_reviews.csv')
-const characteristicReviews = mongoose.Schema({
+const charReviewSchema = mongoose.Schema({
   id: Number,
   characteristic_id: Number,
   review_id: Number,
   value: String
 });
-const CharactersticReview = mongoose.model('CharacteristicReview', characteristicReviews);
+const CharactersticReview = mongoose.model('CharacteristicReview', charReviewSchema);
+
 fs.createReadStream('../data/cReviewsTest.csv')
   .pipe(parse())
   .on('error', (err) => console.log(err))
-  .on('data', (row) => {
-    let instance = new CharactersticReview({
-      id: row[0],
-      characteristic_id: row[1],
-      review_id: row[2],
-      value: row[3]
-    });
-    instance.save(err => {
-      if (err) {
-        console.log(err);
-      }
-    });
-  })
+  .on('data', (row) => saveRow(row, charReviewSchema, CharactersticReview))
   .on('end', () => console.log("Completed characteristic reviews collection"))
 
+/* -----------------------------------------------------
+Import characteristic reviews CSV & upload to collection
+----------------------------------------------------- */
+// fs.createReadStream('../data/characteristic_reviews.csv')
+// const charReviewSchema = mongoose.Schema({
+//   id: Number,
+//   characteristic_id: Number,
+//   review_id: Number,
+//   value: String
+// });
+// const CharactersticReview = mongoose.model('CharacteristicReview', charReviewSchema);
+
+// fs.createReadStream('../data/cReviewsTest.csv')
+//   .pipe(parse())
+//   .on('error', (err) => console.log(err))
+//   .on('data', (row) => saveRow(row, charReviewSchema, CharactersticReview))
+//   .on('end', () => console.log("Completed characteristic reviews collection"))
+
+
+/* ----------------------------------------------
+Import characteristics CSV & upload to collection
+---------------------------------------------- */
+// fs.createReadStream('../data/characteristic_reviews.csv')
+// const charSchema = mongoose.Schema({
+//   id: Number,
+//   product_id: String,
+//   name: String
+// });
+// const Characterstic = mongoose.model('Characteristic', charSchema);
+
+// fs.createReadStream('../data/cTest.csv')
+//   .pipe(parse())
+//   .on('error', (err) => console.log(err))
+//   .on('data', (row) => saveRow(row, charSchema, Characterstic))
+//   .on('end', () => console.log("Completed characteristics collection"))
+
+/* ----------------------------------------------
+Import characteristics CSV & upload to collection
+---------------------------------------------- */
+// fs.createReadStream('../data/characteristic_reviews.csv')
+// const charSchema = mongoose.Schema({
+//   id: Number,
+//   product_id: String,
+//   name: String
+// });
+// const Characterstic = mongoose.model('Characteristic', charSchema);
+
+// fs.createReadStream('../data/cTest.csv')
+//   .pipe(parse())
+//   .on('error', (err) => console.log(err))
+//   .on('data', (row) => saveRow(row, charSchema, Characterstic))
+//   .on('end', () => console.log("Completed characteristics collection"))
 
 
 
 
 
 
+// // Reads in csv file as readstream & returns dataframe class of csv data
+// const csvToDF = (filepath, colnames, callback) => {
+//   let chunks = [];
+//   fs.createReadStream(filepath)
+//     .on('error', (err) => console.log(err))
+//     .pipe(parse())
+//     .on('data', (row) => chunks.push(row))
+//     .on('end', () => callback(new DataFrame(chunks, colnames)))
+// }
 
 // // Import all csv files as dataframes
 // csvToDF('../data/characteristic_reviews.csv', ['id', 'characteristic_id', 'review_id', 'values'], charsReviewsDF => {

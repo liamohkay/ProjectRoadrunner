@@ -46,71 +46,87 @@ Read in review CSV data and upload to database w/ embedded photos
 let reviewStream = byline(fs.createReadStream('../data/reviews.csv', { encoding: 'utf8' }));
 
 mongoose.connection.on('open', (err, conn) => {
-  let counter = 0;
+  console.time('review');
   let bulk = Review.collection.initializeUnorderedBulkOp();
 
   reviewStream
     .on('error', (err) => console.log(err))
-    .on('data', (row) => {
-      counter++;
+    .on('data', async (row) => {
+      // Get photos & embed
       row = row.toString('utf-8').split(',');
-      bulk.insert(getRowObj(row, reviewSchema));
-
-      if (counter % 1000 === 0) {
+      if (row[0] !== 'id') {
         reviewStream.pause();
-        bulk.execute((err, result) => {
-          if (err) throw err;
-          bulk = Review.collection.initializeOrderedBulkOp();;
-          reviewStream.resume();
-        });
-      }
-
-      if (counter % 1000000 === 0) {
-        console.log(counter);
+        await Photo.find({ review_id: row[0] })
+          .lean()
+          .catch(err => console.log(err))
+          .then(photos => {
+            bulk.insert({
+              id: Number(row[0]),
+              product_id: row[1],
+              rating: Number(row[2]),
+              date: row[3].replace('"', ''),
+              summary: row[4].replace('"', ''),
+              body: row[5].replace('"', ''),
+              recommend: row[6] === 'TRUE' || row[6] === '1' ? true : false,
+              reported: row[7] === 'TRUE' || row[7] === '1' ? true : false,
+              reviewer_name: row[8].replace('"', ''),
+              reviewer_email: row[9].replace('"', ''),
+              response: row[10] === '' ? null : row[10].replace('"', ''),
+              helpfulness: Number(row[11]),
+              photos: photos
+            });
+            bulk.execute((err, result) => {
+              if (err) console.log(err);
+              bulk = Review.collection.initializeUnorderedBulkOp();;
+              reviewStream.resume();
+            });
+          })
       }
     })
     .on('end', () => {
-      if (counter % 1000 != 0) {
-        bulk.execute((err, result) => {
-          if (err) throw err;
-          console.log("Completed review collection");
-        });
-      }
-    });
+      bulk.execute((err, result) => {
+        if (err) console.log(err);
+        console.log("Completed review collection");
+        console.timeEnd('review');
+      });
+    })
 });
 
 
 
+// counter++;
+// row = row.toString('utf-8').split(',');
+// await Photo.find({ review_id: row[0] })
+// .lean()
+// .catch(err => console.log(err))
+// .then(photos => {
+//   bulk.insert({
+//     id: Number(row[0]),
+//     product_id: row[1],
+//     rating: Number(row[2]),
+//     date: row[3].replace('"', ''),
+//     summary: row[4].replace('"', ''),
+//     body: row[5].replace('"', ''),
+//     recommend: row[6] === 'TRUE' || row[6] === '1' ? true : false,
+//     reported: row[7] === 'TRUE' || row[7] === '1' ? true : false,
+//     reviewer_name: row[8].replace('"', ''),
+//     reviewer_email: row[9].replace('"', ''),
+//     response: row[10] === '' ? null : row[10].replace('"', ''),
+//     helpfulness: Number(row[11]),
+//     photos: photos
+//   });
+//   if (counter % 1000 === 0) {
+//     reviewStream.pause();
+//     bulk.execute((err, result) => {
+//       if (err) throw err;
+//       bulk = Review.collection.initializeOrderedBulkOp();;
+//       reviewStream.resume();
+//     });
+//   }
 
+//   if (counter % 1000 === 0) {
+//     console.log(counter);
+//   }
+// })
+// })
 
-// Get photos & embed
-    //   if (row[0] !== 'id') {
-    //     reviewStream.pause();
-    //     await Photo.find({ review_id: row[0] })
-    //       .lean()
-    //       .catch(err => console.log(err))
-    //       .then(photos => {
-    //         bulk.insert({
-    //           id: Number(row[0]),
-    //           product_id: row[1],
-    //           rating: Number(row[2]),
-    //           date: row[3].replace('"', ''),
-    //           summary: row[4].replace('"', ''),
-    //           body: row[5].replace('"', ''),
-    //           recommend: row[6] === 'TRUE' || row[6] === '1' ? true : false,
-    //           reported: row[7] === 'TRUE' || row[7] === '1' ? true : false,
-    //           reviewer_name: row[8].replace('"', ''),
-    //           reviewer_email: row[9].replace('"', ''),
-    //           response: row[10] === '' ? null : row[10].replace('"', ''),
-    //           helpfulness: Number(row[11]),
-    //           photos: photos
-    //         });
-    //         bulk.execute((err, result) => {
-    //           if (err) console.log(err);
-    //           bulk = Review.collection.initializeUnorderedBulkOp();;
-    //           reviewStream.resume();
-    //         });
-    //       })
-    //     }
-    //   });
-    // });

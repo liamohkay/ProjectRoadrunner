@@ -12,9 +12,13 @@ const db = require('./mongo/index.js');
 
 module.exports = {
   getReview: (req, res) => {
-    // let productID = url.slice(1, url.length);
-    console.log(req.url);
-    // db.Review.find({ product_id: req. })
+    let productID = req.url.slice(1, req.url.length);
+    db.Review.find({ product_id: productID })
+      .then(data => {
+        console.log(data);
+        res.status(200).send(data);
+      })
+      .catch(err => console.log(err))
   }
 }
 

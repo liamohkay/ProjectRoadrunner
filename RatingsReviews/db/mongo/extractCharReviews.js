@@ -18,9 +18,9 @@ const getRowObj = (row, schema, Class) => {
 Import characteristic reviews CSV & upload to collection
 ----------------------------------------------------- */
 const charReviewSchema = mongoose.Schema({
-  id: Number,
-  characteristic_id: Number,
-  review_id: Number,
+  id: String,
+  characteristic_id: String,
+  review_id: String,
   value: String
 });
 const CharactersticReview = mongoose.model('CharacteristicReview', charReviewSchema);
@@ -34,7 +34,13 @@ mongoose.connection.on('open', (err, conn) => {
     .on('error', (err) => console.log(err))
     .on('data', (row) => {
       counter++;
-      bulk.insert(getRowObj(row, charReviewSchema));
+      row = row.toString('utf-8').split(',');
+      bulk.insert({
+        id: row[0],
+        characteristic_id: row[1],
+        review_id: row[2]),
+        value: row[3]
+      });
 
       if (counter % 1000 === 0) {
         charReviewStream.pause();

@@ -153,57 +153,57 @@ const saveReviews = (reviewsDF, photosDF, product_id) => {
 
 
 
-// // Reads in csv file as readstream & returns dataframe class of csv data
-// const csvToDF = (filepath, colnames, callback) => {
-//   let chunks = [];
-//   fs.createReadStream(filepath)
-//     .on('error', (err) => console.log(err))
-//     .pipe(parse())
-//     .on('data', (row) => chunks.push(row))
-//     .on('end', () => callback(new DataFrame(chunks, colnames)))
-// }
+// Reads in csv file as readstream & returns dataframe class of csv data
+const csvToDF = (filepath, colnames, callback) => {
+  let chunks = [];
+  fs.createReadStream(filepath)
+    .on('error', (err) => console.log(err))
+    .pipe(parse())
+    .on('data', (row) => chunks.push(row))
+    .on('end', () => callback(new DataFrame(chunks, colnames)))
+}
 
-// // Import all csv files as dataframes
-// csvToDF('../data/characteristic_reviews.csv', ['id', 'characteristic_id', 'review_id', 'values'], charsReviewsDF => {
-//   csvToDF('../data/reviews_photos.csv', ['id','review_id', 'url'], photosDF => {
-//     csvToDF('../data/characteristics.csv', ['id', 'product_id', 'name'], charsDF => {
-//       csvToDF('../data/reviews.csv', reviewsCols , reviewsDF => {
-//         console.log("Dataframes loaded");
+// Import all csv files as dataframes
+csvToDF('../data/characteristic_reviews.csv', ['id', 'characteristic_id', 'review_id', 'values'], charsReviewsDF => {
+  csvToDF('../data/reviews_photos.csv', ['id','review_id', 'url'], photosDF => {
+    csvToDF('../data/characteristics.csv', ['id', 'product_id', 'name'], charsDF => {
+      csvToDF('../data/reviews.csv', reviewsCols , reviewsDF => {
+        console.log("Dataframes loaded");
 
-//         // Drop any duplicates from all dataframes
-//         // charsReviewsDF = charsReviewsDF.filter(row => row.get('id') !== 'id').dropDuplicates();
-//         // reviewsDF = reviewsDF.filter(row => row.get('id') !== 'id').dropDuplicates();
-//         // photosDF = photosDF.filter(row => row.get('id') !== 'id').dropDuplicates();
-//         // charsDF = charsDF.filter(row => row.get('id') !== 'id').dropDuplicates();
+        // Drop any duplicates from all dataframes
+        // charsReviewsDF = charsReviewsDF.filter(row => row.get('id') !== 'id').dropDuplicates();
+        // reviewsDF = reviewsDF.filter(row => row.get('id') !== 'id').dropDuplicates();
+        // photosDF = photosDF.filter(row => row.get('id') !== 'id').dropDuplicates();
+        // charsDF = charsDF.filter(row => row.get('id') !== 'id').dropDuplicates();
 
-//         // Transoform malformed / incomplete data
-//         reviewsDF = reviewsDF.chain(
-//           row => row.set('recommend', row.get('recommend') === 'TRUE' || row.get('recommend') === '1' ? 1 : 0),
-//           row => row.set('reported', row.get('reported') === 'TRUE' || row.get('reported') === '1' ? 1 : 0),
-//           row => row.set('response', row.get('response') === '' ? null : row.get('response'))
-//         )
+        // Transoform malformed / incomplete data
+        reviewsDF = reviewsDF.chain(
+          row => row.set('recommend', row.get('recommend') === 'TRUE' || row.get('recommend') === '1' ? 1 : 0),
+          row => row.set('reported', row.get('reported') === 'TRUE' || row.get('reported') === '1' ? 1 : 0),
+          row => row.set('response', row.get('response') === '' ? null : row.get('response'))
+        )
 
-//         // Merge data for metadata schema
-//         charsDF = charsDF.rename('id', 'characteristic_id');
-//         let charMergeDF = charsDF.join(charsReviewsDF, 'characteristic_id', 'inner')
+        // Merge data for metadata schema
+        charsDF = charsDF.rename('id', 'characteristic_id');
+        let charMergeDF = charsDF.join(charsReviewsDF, 'characteristic_id', 'inner')
 
-//         // Create db instances for every product id + store
-//         let productIDs = reviewsDF.unique('product_id').toArray();
-//         productIDs.map(id => {
-//           saveMeta(reviewsDF, charMergeDF, id[0]);
-//           saveReviews(reviewsDF, photosDF, id[0]);
-//         });
+        // Create db instances for every product id + store
+        let productIDs = reviewsDF.unique('product_id').toArray();
+        productIDs.map(id => {
+          saveMeta(reviewsDF, charMergeDF, id[0]);
+          saveReviews(reviewsDF, photosDF, id[0]);
+        });
 
-//         // Create indexes for each collection
-//         // Metadata.collection.createIndex({ product_id: -1 }, { unique: true })
-//         // Review.collection.createIndex({ product_id: -1 }, { unique: true })
-//         console.log('DONE LOADING');
-//       })
-//     });
-//   });
-// });
+        // Create indexes for each collection
+        // Metadata.collection.createIndex({ product_id: -1 }, { unique: true })
+        // Review.collection.createIndex({ product_id: -1 }, { unique: true })
+        console.log('DONE LOADING');
+      })
+    });
+  });
+});
 
-// Aggregate data for meta schema
+// // Aggregate data for meta schema
 // let ratingsAggDF = reviewsDF.groupBy('product_id', 'characteristic_id')
 //   .aggregate(group => group.count('id'))
 // let recAggDF = reviewsDF.groupBy('product_id', 'recommend')

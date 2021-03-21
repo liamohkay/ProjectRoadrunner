@@ -63,7 +63,7 @@ mongoose.connection.on('open', (err, conn) => {
       if (counter % 1000 != 0) {
         bulk.execute((err, result) => {
           if (err) throw err;
-          console.log("Completed photo collection");
+          console.log("Completed review collection");
         });
       }
     });

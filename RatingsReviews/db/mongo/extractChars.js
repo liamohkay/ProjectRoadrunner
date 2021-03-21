@@ -39,38 +39,34 @@ mongoose.connection.on('open', (err, conn) => {
   let bulk = Characterstic.collection.initializeUnorderedBulkOp();
   charStream
     .on('error', (err) => console.log(err))
-    .on('data', (row) => {
+    .on('data', async (row) => {
       row = row.toString('utf-8').split(',');
-      CharactersticReview.find({ characteristic_id: row[0] })
-        .lean()
-        .catch(err => console.log(err))
-        .then(data => {
-          bulk.insert({
-            characteristic_id: row[0],
-            product_id: row[1],
-            name: row[2],
-            characteristicReviews: data
-          })
-        })
-        .then(() => {
-          if (bulk.length % 1000000 === 0) {
-            console.log(bulk.length);
-          } else if (bulk.length % 1000 === 0) {
-            charStream.pause();
-            bulk.execute((err, result) => {
-              if (err) console.log(err);
-              bulk = Characterstic.collection.initializeUnorderedBulkOp();
+      if (row[0] !== 'id') {
+        charStream.pause();
+        await CharactersticReview.find({ characteristic_id: row[0] })
+          .lean()
+          .catch(err => console.log(JSON.stringify(err.writeErrors)))
+          .then(data => {
+            bulk.insert({
+              characteristic_id: row[0],
+              product_id: row[1],
+              name: row[2],
+              characteristicReviews: data
             });
-            charStream.resume();
-          }
-        })
-      })
+            bulk.execute((err, result) => {
+              if (err) console.log(err.writeErrors[0]);
+              bulk = Characterstic.collection.initializeUnorderedBulkOp();
+              charStream.resume();
+            });
+          })
+        }
     })
     .on('end', () => {
-      if (bulk.length % 1000 != 0) {
+      if (bulk.length % 20 != 0) {
         bulk.execute((err, result) => {
           if (err) console.log(err);
           console.log("Completed characteristic collection");
         })
       }
     })
+  })

@@ -6,20 +6,12 @@ const byline = require('byline');
 const mongoose = require('mongoose');
 mongoose.connect(`mongodb://localhost/SDC`, { poolSize: 10, bufferMaxEntries: 0, useNewUrlParser: true, useUnifiedTopology: true });
 
-// Helper function that creates obj for mongo collection instance
-const getRowObj = (row, schema, Class) => {
-  row = row.toString('utf-8').split(',');
-  let instance = {};
-  Object.keys(Object.values(schema)[0]).map((key, i) => instance[key] = row[i]);
-  return instance;
-}
-
 /* -------------------------------------
 Import photos CSV & upload to collection
 ------------------------------------- */
 const photoSchema = mongoose.Schema({
-  id: Number,
-  review_id: Number,
+  photo_id: String,
+  review_id: String,
   url: String
 });
 const Photo = mongoose.model('Photo', photoSchema);
@@ -36,11 +28,12 @@ mongoose.connection.on('open', (err, conn) => {
       counter++;
       row = row.toString('utf-8').split(',');
       bulk.insert({
-        id: Number(row[0]),
-        review_id: Number(row[1]),
-        url: row[2]
+        photo_id: row[0],
+        review_id: row[1],
+        url: row[2].replace('"', '')
       });
 
+      if (counter % 1000000 === 0) console.log(counter);
       if (counter % 1000 === 0) {
         photoStream.pause();
         bulk.execute((err, result) => {
@@ -48,10 +41,6 @@ mongoose.connection.on('open', (err, conn) => {
           bulk = Photo.collection.initializeOrderedBulkOp();;
           photoStream.resume();
         });
-      }
-
-      if (counter % 1000000 === 0) {
-        console.log(counter);
       }
     })
     .on('end', () => {

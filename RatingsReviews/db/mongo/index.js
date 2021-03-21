@@ -1,24 +1,56 @@
-const mongoose = require('mongoose');
+/* ----------
+Connect to DB
+---------- */
 const port = 27017;
+const mongoose = require('mongoose');
+mongoose.connect(`mongodb://localhost/SDC`, { poolSize: 10, bufferMaxEntries: 0, useNewUrlParser: true, useUnifiedTopology: true });
+const connection = mongoose.connection
+  .once('open', () => console.log(`SUCCESS: Connected to db on port: ${port}`))
+  .on('error', () => console.log(`FAILED: Can't connect to db on port: ${port}`));
 
-// Connect to db
-mongoose.connect(`mongodb://localhost/SDC`, { useNewUrlParser: true } );
-const db = mongoose.connection;
-db.on('error', () => console.log(`FAILED: Can't connect to db on port: ${port}`));
-db.once('open', () => console.log(`SUCCESS: Connected to db on port: ${port}`));
-
-const metaSchema = mongoose.Schema({
-  product_id: String,
-  recommended: {},
-  ratings: {},
-  characteristics: {}
+/* -------------
+Database Schemas
+------------- */
+const charReviewSchema = mongoose.Schema({
+  id: String,
+  characteristic_id: String,
+  review_id: String,
+  value: String
 });
-const Metadata = mongoose.model('Metadata', metaSchema);
-
-const reviewsSchema = mongoose.Schema({
+const charSchema = mongoose.Schema({
+  characteristic_id: String,
   product_id: String,
-  results: []
+  name: String,
 });
-const Review = mongoose.model('Review', reviewsSchema);
+const photoSchema = mongoose.Schema({
+  photo_id: String,
+  review_id: String,
+  url: String
+});
+const reviewSchema = mongoose.Schema({
+  id: String,
+  product_id: String,
+  rating: String,
+  date: String,
+  summary: String,
+  body: String,
+  recommend: Boolean,
+  reported: Boolean,
+  reviewer_name: String,
+  reviewer_email: String,
+  response: String,
+  helpfulness: String
+});
 
-module.exports = db;
+const CharactersticReview = mongoose.model('CharacteristicReview', charReviewSchema);
+const Characterstic = mongoose.model('Characteristic', charSchema);
+const Photo = mongoose.model('Photo', photoSchema);
+const Review = mongoose.model('Review', reviewSchema);
+
+module.exports = {
+  connection: connection,
+  CharactersticReview: CharactersticReview,
+  Characterstic: Characterstic,
+  Photo: Photo,
+  Review: Review
+};

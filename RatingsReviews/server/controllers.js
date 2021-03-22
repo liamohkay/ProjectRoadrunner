@@ -4,7 +4,7 @@ Import config + dependencies
 const db = require('../db/index.js');
 const mongoose = require('mongoose');
 const DataFrame = require('dataframe-js').DataFrame;
-const { Connection, CharacteristicReview, Characteristic, Photo, Review } = db;
+const { Connection, Characteristic, Review } = db;
 
 /* -------------
 Helper Functions
@@ -77,12 +77,12 @@ module.exports = {
 
   getMeta: (req, res) => {
     const { product_id } = req.query;
+
+    // Aggregate mean char review scores
     Characteristic
       .find({ product_id: product_id })
       .catch(err => res.status(400).send(err))
       .then(charData => {
-
-        // Aggregate mean char review scores
         let characteristics = getCharacteristics(charData);
 
         // Get rating & recommended from Review
@@ -90,8 +90,9 @@ module.exports = {
           .find({ product_id: product_id })
           .select('rating recommend')
           .then(reviewData => {
-            // Return characteristics obj to user
             let [ratings, recommended] = getRatingsRecommended(reviewData);
+
+            // Return structured resp to user
             res.status(200).send({
               product_id,
               ratings,
@@ -101,6 +102,13 @@ module.exports = {
           });
 
       });
+  },
+
+  putHelpful: (req, res) => {
+    const id = req.params.review_id;
+    Review.findOneAndUpdate({ reivew_id: id }, {$inc: {'helpfulness': 1}})
+      .catch(err => res.status(400).send(err))
+      .then(() => res.status(204).send())
   }
 
 }

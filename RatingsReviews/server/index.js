@@ -16,8 +16,9 @@ const app = express()
 /* -------
 API Routes
 ------- */
-app.use('/api/reviews/meta', controllers.getMeta);
-app.use('/api/reviews', controllers.getReview);
+app.get('/api/reviews', controllers.getReview);
+app.get('/api/reviews/meta', controllers.getMeta);
+app.put('/api/reviews/:review_id/helpful', controllers.putHelpful);
 
 
 app.listen(port, () => console.log(`Listening on port: ${port}`));

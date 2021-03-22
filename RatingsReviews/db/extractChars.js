@@ -50,4 +50,4 @@ db.Connection.on('open', (err, conn) => {
         db.Connection.close();
       })
     })
-  })
+})

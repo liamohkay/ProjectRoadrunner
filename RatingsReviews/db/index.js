@@ -27,6 +27,7 @@ const charSchema = mongoose.Schema({
   characteristic_id: Number,
   product_id: String,
   name: String,
+  characteristicReviews: []
 });
 const photoSchema = mongoose.Schema({
   photo_id: Number,

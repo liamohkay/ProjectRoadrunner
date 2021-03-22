@@ -11,11 +11,13 @@ const app = express()
   .use(morgan('dev'))
   .use(bodyParser.json())
   .use(bodyParser.urlencoded({ extended: true }))
-  .use(express.static(path.join(__dirname, '../../../react-client/dist/')))
+  .use(express.static(path.join(__dirname, '../../../react-client/dist/')));
 
 /* -------
 API Routes
 ------- */
-app.use('/api/reviews', controllers.getReview)
+app.use('/api/reviews/meta', controllers.getMeta);
+app.use('/api/reviews', controllers.getReview);
+
 
 app.listen(port, () => console.log(`Listening on port: ${port}`));

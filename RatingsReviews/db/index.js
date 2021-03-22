@@ -46,7 +46,8 @@ const reviewSchema = mongoose.Schema({
   reviewer_name: String,
   reviewer_email: String,
   response: String,
-  helpfulness: Number
+  helpfulness: Number,
+  photos: []
 });
 
 const CharacteristicReview = mongoose.model('CharacteristicReview', charReviewSchema);

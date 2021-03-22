@@ -10,9 +10,9 @@ mongoose.connect(`mongodb://localhost/SDC`, { poolSize: 10, bufferMaxEntries: 0,
 Mongoose Schemas
 ------------- */
 const reviewSchema = mongoose.Schema({
-  id: String,
+  id: Number,
   product_id: String,
-  rating: String,
+  rating: Number,
   date: String,
   summary: String,
   body: String,
@@ -21,7 +21,7 @@ const reviewSchema = mongoose.Schema({
   reviewer_name: String,
   reviewer_email: String,
   response: String,
-  helpfulness: String
+  helpfulness: Number
 });
 const Review = mongoose.model('Review', reviewSchema);
 

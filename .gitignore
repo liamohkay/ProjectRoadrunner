@@ -1,2 +1,5 @@
+react-client/dist/bundle.js
 node_modules
 RatingsReviews/db/data
+RatingsReviews/server/config.js
+.vscode

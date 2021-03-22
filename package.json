@@ -7,7 +7,8 @@
     "start": "nodemon server/index.js",
     "build": "webpack -d --watch",
     "prod": "webpack -p",
-    "test": "jest "
+    "test": "jest",
+    "server": "nodemon RatingsReviews/server/index.js"
   },
   "author": "Sarah's Minions Project Catwalk",
   "license": "ISC",

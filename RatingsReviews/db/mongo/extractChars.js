@@ -10,6 +10,7 @@ const mongoose = require('mongoose');
 Extract, transform, load characteristics CSV & embed reveiews
 ---------------------------------------------------------- */
 let charStream = byline(fs.createReadStream('../data/characteristics.csv', { encoding: 'utf8' }))
+
 db.Connection.on('open', (err, conn) => {
   let bulk = db.Characterstic.collection.initializeUnorderedBulkOp();
   charStream
@@ -37,11 +38,9 @@ db.Connection.on('open', (err, conn) => {
         }
     })
     .on('end', () => {
-      if (bulk.length % 20 != 0) {
-        bulk.execute((err, result) => {
-          if (err) console.log(err);
-          console.log("Completed characteristic collection");
-        })
-      }
+      bulk.execute((err, result) => {
+        if (err) console.log(err);
+        console.log("Completed characteristic collection");
+      })
     })
   })

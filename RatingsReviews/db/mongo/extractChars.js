@@ -3,47 +3,22 @@ Dependencies + Libraries
 --------------------- */
 const fs = require('fs');
 const byline = require('byline');
+const db = require('./index.js');
 const mongoose = require('mongoose');
-mongoose.connect(`mongodb://localhost/SDC`, { poolSize: 10, bufferMaxEntries: 0, useNewUrlParser: true, useUnifiedTopology: true });
-const db = mongoose.connection;
-const CharacteristicReviews = db.collection('characteristicreviews');
 
-// Helper function that creates obj for mongo collection instance
-const getRowObj = (row, schema) => {
-  row = row.toString('utf-8').split(',');
-  let instance = {};
-  Object.keys(Object.values(schema)[0]).map((key, i) => instance[key] = row[i]);
-  return instance;
-}
-
-/* ----------------------------------------------
-Import characteristics CSV & upload to collection
----------------------------------------------- */
-const charReviewSchema = mongoose.Schema({
-  id: String,
-  characteristic_id: String,
-  review_id: String,
-  value: String
-});
-const CharactersticReview = mongoose.model('CharacteristicReview', charReviewSchema);
-
-const charSchema = mongoose.Schema({
-  characteristic_id: String,
-  product_id: String,
-  name: String,
-});
-const Characterstic = mongoose.model('Characteristic', charSchema);
-
+/* ----------------------------------------------------------
+Extract, transform, load characteristics CSV & embed reveiews
+---------------------------------------------------------- */
 let charStream = byline(fs.createReadStream('../data/characteristics.csv', { encoding: 'utf8' }))
-mongoose.connection.on('open', (err, conn) => {
-  let bulk = Characterstic.collection.initializeUnorderedBulkOp();
+db.Connection.on('open', (err, conn) => {
+  let bulk = db.Characterstic.collection.initializeUnorderedBulkOp();
   charStream
     .on('error', (err) => console.log(err))
     .on('data', async (row) => {
       row = row.toString('utf-8').split(',');
       if (row[0] !== 'id') {
         charStream.pause();
-        await CharactersticReview.find({ characteristic_id: row[0] })
+        await db.CharactersticReview.find({ characteristic_id: row[0] })
           .lean()
           .catch(err => console.log(JSON.stringify(err.writeErrors)))
           .then(data => {
@@ -55,7 +30,7 @@ mongoose.connection.on('open', (err, conn) => {
             });
             bulk.execute((err, result) => {
               if (err) console.log(err.writeErrors[0]);
-              bulk = Characterstic.collection.initializeUnorderedBulkOp();
+              bulk = db.Characterstic.collection.initializeUnorderedBulkOp();
               charStream.resume();
             });
           })

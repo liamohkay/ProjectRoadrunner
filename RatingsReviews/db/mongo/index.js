@@ -3,7 +3,13 @@ Connect to DB
 ---------- */
 const port = 27017;
 const mongoose = require('mongoose');
-mongoose.connect(`mongodb://localhost/SDC`, { poolSize: 10, bufferMaxEntries: 0, useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(`mongodb://localhost/SDC`, {
+  poolSize: 10,
+  bufferMaxEntries: 0,
+  useNewUrlParser:
+  true,
+  useUnifiedTopology: true
+});
 const connection = mongoose.connection
   .once('open', () => console.log(`SUCCESS: Connected to db on port: ${port}`))
   .on('error', () => console.log(`FAILED: Can't connect to db on port: ${port}`));
@@ -48,7 +54,7 @@ const Photo = mongoose.model('Photo', photoSchema);
 const Review = mongoose.model('Review', reviewSchema);
 
 module.exports = {
-  connection: connection,
+  Connection: connection,
   CharactersticReview: CharactersticReview,
   Characterstic: Characterstic,
   Photo: Photo,

@@ -104,9 +104,13 @@ module.exports = {
       });
   },
 
+  postReview: (req, res) => {
+    return null;
+  },
+
   putHelpful: (req, res) => {
     const id = req.params.review_id;
-    Review.findOneAndUpdate({ reivew_id: id }, {$inc: {'helpfulness': 1}})
+    Review.findOneAndUpdate({ review_id: id }, {$inc: {'helpfulness': 1}})
       .catch(err => res.status(400).send(err))
       .then(() => res.status(204).send())
   }

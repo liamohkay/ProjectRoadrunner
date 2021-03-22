@@ -14,9 +14,9 @@ const connection = mongoose.connection
   .once('open', () => console.log(`SUCCESS: Connected to db on port: ${port}`))
   .on('error', () => console.log(`FAILED: Can't connect to db on port: ${port}`));
 
-/* -------------
-Database Schemas
-------------- */
+/* ----------------------
+Database Schemas & Models
+---------------------- */
 const charReviewSchema = mongoose.Schema({
   id: Number,
   characteristic_id: Number,
@@ -25,7 +25,7 @@ const charReviewSchema = mongoose.Schema({
 });
 const charSchema = mongoose.Schema({
   characteristic_id: Number,
-  product_id: Number,
+  product_id: String,
   name: String,
 });
 const photoSchema = mongoose.Schema({
@@ -49,14 +49,14 @@ const reviewSchema = mongoose.Schema({
 });
 
 const CharacteristicReview = mongoose.model('CharacteristicReview', charReviewSchema);
-const Characterstic = mongoose.model('Characteristic', charSchema);
+const Characteristic = mongoose.model('Characteristic', charSchema);
 const Photo = mongoose.model('Photo', photoSchema);
 const Review = mongoose.model('Review', reviewSchema);
 
 module.exports = {
   Connection: connection,
   CharacteristicReview,
-  Characterstic,
+  Characteristic,
   Photo,
   Review
 };

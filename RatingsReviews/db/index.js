@@ -18,14 +18,14 @@ const connection = mongoose.connection
 Database Schemas
 ------------- */
 const charReviewSchema = mongoose.Schema({
-  id: String,
-  characteristic_id: String,
-  review_id: String,
-  value: String
+  id: Number,
+  characteristic_id: Number,
+  review_id: Number,
+  value: Number,
 });
 const charSchema = mongoose.Schema({
-  characteristic_id: String,
-  product_id: String,
+  characteristic_id: Number,
+  product_id: Number,
   name: String,
 });
 const photoSchema = mongoose.Schema({
@@ -48,15 +48,15 @@ const reviewSchema = mongoose.Schema({
   helpfulness: Number
 });
 
-const CharactersticReview = mongoose.model('CharacteristicReview', charReviewSchema);
+const CharacteristicReview = mongoose.model('CharacteristicReview', charReviewSchema);
 const Characterstic = mongoose.model('Characteristic', charSchema);
 const Photo = mongoose.model('Photo', photoSchema);
 const Review = mongoose.model('Review', reviewSchema);
 
 module.exports = {
   Connection: connection,
-  CharactersticReview: CharactersticReview,
-  Characterstic: Characterstic,
-  Photo: Photo,
-  Review: Review
+  CharacteristicReview,
+  Characterstic,
+  Photo,
+  Review
 };

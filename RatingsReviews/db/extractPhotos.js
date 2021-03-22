@@ -16,7 +16,7 @@ const photoSchema = mongoose.Schema({
 });
 const Photo = mongoose.model('Photo', photoSchema);
 
-let photoStream = byline(fs.createReadStream('../data/reviews_photos.csv', { encoding: 'utf8' }))
+let photoStream = byline(fs.createReadStream('./data/reviews_photos.csv', { encoding: 'utf8' }))
 
 mongoose.connection.on('open', (err, conn) => {
   console.time('photos');

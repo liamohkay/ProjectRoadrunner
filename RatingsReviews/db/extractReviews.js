@@ -43,7 +43,7 @@ const getRowObj = (row, schema, Class) => {
 /* --------------------------------------------------------------
 Read in review CSV data and upload to database w/ embedded photos
 -------------------------------------------------------------- */
-let reviewStream = byline(fs.createReadStream('../data/reviews.csv', { encoding: 'utf8' }));
+let reviewStream = byline(fs.createReadStream('./data/reviews.csv', { encoding: 'utf8' }));
 
 mongoose.connection.on('open', (err, conn) => {
   console.time('reviews');

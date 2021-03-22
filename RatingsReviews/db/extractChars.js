@@ -9,7 +9,7 @@ const mongoose = require('mongoose');
 /* ----------------------------------------------------------
 Extract, transform, load characteristics CSV & embed reveiews
 ---------------------------------------------------------- */
-let charStream = byline(fs.createReadStream('../data/characteristics.csv', { encoding: 'utf8' }))
+let charStream = byline(fs.createReadStream('./data/characteristics.csv', { encoding: 'utf8' }))
 
 db.Connection.on('open', (err, conn) => {
   let bulk = db.Characterstic.collection.initializeUnorderedBulkOp();

@@ -4,42 +4,38 @@ Dependencies + Libraries
 const fs = require('fs');
 const byline = require('byline');
 const mongoose = require('mongoose');
-mongoose.connect(`mongodb://localhost/SDC`, { poolSize: 10, bufferMaxEntries: 0, useNewUrlParser: true, useUnifiedTopology: true });
+const db = require('./index.js');
+const Photo = db.Photo;
 
-/* -------------------------------------
-Import photos CSV & upload to collection
-------------------------------------- */
-const photoSchema = mongoose.Schema({
-  id: Number,
-  review_id: Number,
-  url: String
-});
-const Photo = mongoose.model('Photo', photoSchema);
-
+/* --------------------------------
+Extract, transform, load photos CSV
+-------------------------------- */
 let photoStream = byline(fs.createReadStream('./data/reviews_photos.csv', { encoding: 'utf8' }))
 
-mongoose.connection.on('open', (err, conn) => {
+db.Connection.on('open', err => {
   console.time('photos');
   let counter = 0;
-  let bulk = Photo.collection.initializeOrderedBulkOp();
+  let bulk = Photo.collection.initializeUnorderedBulkOp();
 
   photoStream
     .on('error', (err) => console.log(err))
     .on('data', (row) => {
       counter++;
       row = row.toString('utf-8').split(',');
+
       bulk.insert({
         id: Number(row[0]),
         review_id: Number(row[1]),
         url: row[2].replace(/["]/g, '')
       });
 
-      if (counter % 1000000 === 0) console.log(counter);
-      if (counter % 1000 === 0) {
+      if (counter % 1000000 === 0) {
+        console.log(counter);
+      } else if (counter % 1000 === 0) {
         photoStream.pause();
         bulk.execute((err, result) => {
           if (err) console.log(err);
-          bulk = Photo.collection.initializeOrderedBulkOp();;
+          bulk = Photo.collection.initializeUnorderedBulkOp();;
           photoStream.resume();
         });
       }
@@ -50,6 +46,7 @@ mongoose.connection.on('open', (err, conn) => {
           if (err) console.log(err);
           console.log("Completed photo collection");
           console.timeEnd('photos');
+          db.Connection.close();
         });
       }
     });

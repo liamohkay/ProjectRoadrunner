@@ -3,13 +3,13 @@ Dependencies + Libraries
 --------------------- */
 const fs = require('fs');
 const byline = require('byline');
-const mongoose = require('mongoose');
 const db = require('./index.js');
+const mongoose = require('mongoose');
 const CharacteristicReview = db.CharacteristicReview;
 
-/* ------------------------------------------------------------------
-Extract, transform, load characteristics reviews CSV & embed reveiews
------------------------------------------------------------------- */
+/* -------------------------------------------------
+Extract, transform, load characteristics reviews CSV
+------------------------------------------------- */
 let charReviewStream = byline(fs.createReadStream('./data/characteristic_reviews.csv', { encoding: 'utf8' }));
 
 mongoose.connection.on('open', err => {
@@ -47,6 +47,7 @@ mongoose.connection.on('open', err => {
           if (err) console.log(err);
           console.log("Completed characteristic reviews collection");
           console.timeEnd('charReviews');
+          db.Connection.close();
         });
       }
     });

@@ -1,8 +1,7 @@
 /* -------------------------
 Import config + dependencies
 ------------------------- */
-const db = require('./mongo/index.js');
-// const config = require('./server/config.js');
+const db = require('../db/mongo/index.js');
 
 // GET /reviews/?queryparams
 // GET /reviews/meta

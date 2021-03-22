@@ -46,7 +46,7 @@ Read in review CSV data and upload to database w/ embedded photos
 let reviewStream = byline(fs.createReadStream('../data/reviews.csv', { encoding: 'utf8' }));
 
 mongoose.connection.on('open', (err, conn) => {
-  console.time('review');
+  console.time('reviews');
   let bulk = Review.collection.initializeUnorderedBulkOp();
 
   reviewStream
@@ -84,11 +84,10 @@ mongoose.connection.on('open', (err, conn) => {
       }
     })
     .on('end', () => {
-      if (bulk.length % 20 != 0) {
-        bulk.execute((err, result) => {
-          if (err) console.log(err);
-          console.log("Completed review collection");
-        });
-      }
+      console.log("Completed review collection");
+      console.time('reviews')
+      bulk.execute((err, result) => {
+        if (err) console.log(err);
+      });
     });
 });

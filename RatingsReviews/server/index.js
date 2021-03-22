@@ -1,10 +1,10 @@
+const port = 3000;
 const path = require('path');
 const cors = require('cors');
 const morgan = require('morgan');
 const express = require('express');
 const bodyParser = require('body-parser');
-const queries = require('../db/dbQueries.js');
-const port = 3000;
+const controllers = require('./controllers.js');
 
 const app = express()
   .use(cors())
@@ -16,6 +16,6 @@ const app = express()
 /* -------
 API Routes
 ------- */
-app.use('/api/reviews', queries.getReview);
+app.use('/api/reviews', controllers.getReview)
 
 app.listen(port, () => console.log(`Listening on port: ${port}`));

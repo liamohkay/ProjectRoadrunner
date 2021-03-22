@@ -1,11 +1,13 @@
 const axios = require('axios');
-const token = require('../../config.js')
+// const token = require('../../config.js')
+const token = require('../../RatingsReviews/server/config.js')
 
 
 const reviewsController = (req, res) => {
   let method = req.method;
   let url = req.url;
   let body = req.body || null;
+  console.log(body);
   axios({
     method: `${method}`,
     url: `https://app-hrsei-api.herokuapp.com/api/fec2/hr-lax/reviews${url}`,

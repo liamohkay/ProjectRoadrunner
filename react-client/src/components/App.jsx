@@ -112,10 +112,10 @@ function App() {
                 currentProduct={selectedProduct}
                 findAvgRating={findAvgRating}
               />
-              <QA
+              {/* <QA
                 clickTracker={clickTracker}
                 currentProduct={selectedProduct}
-              />
+              /> */}
               <Reviews
                 clickTracker={clickTracker}
                 avgRating={avgRatings}

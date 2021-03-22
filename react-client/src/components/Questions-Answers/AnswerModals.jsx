@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
-import firebase from '../../../../firebase.js'
+// import firebase from '../../../../firebase.js'
 
 const AnswerModals = (props) => {
   const [answer, setAnswer] = useState('')

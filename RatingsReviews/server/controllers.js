@@ -60,10 +60,7 @@ module.exports = {
     const orderBy = {};
     orderBy[orderKey] = -1;
 
-    Review
-      .find({ product_id: product_id })
-      .sort(orderBy)
-      .limit(Number(count))
+    Review.find({ product_id: product_id }).sort(orderBy).limit(Number(count))
       .catch(err => res.status(400).send(err))
       .then(data => {
         res.status(200).send({
@@ -79,16 +76,13 @@ module.exports = {
     const { product_id } = req.query;
 
     // Aggregate mean char review scores
-    Characteristic
-      .find({ product_id: product_id })
+    Characteristic.find({ product_id: product_id })
       .catch(err => res.status(400).send(err))
       .then(charData => {
         let characteristics = getCharacteristics(charData);
 
         // Get rating & recommended from Review
-        Review
-          .find({ product_id: product_id })
-          .select('rating recommend')
+        Review.find({ product_id: product_id }).select('rating recommend')
           .then(reviewData => {
             let [ratings, recommended] = getRatingsRecommended(reviewData);
 
@@ -105,7 +99,10 @@ module.exports = {
   },
 
   postReview: (req, res) => {
-    return null;
+    let newReview = new Review(req.body);
+    newReview.save()
+      .catch(err => res.status(400).send(err))
+      .then(() => res.status(200).send())
   },
 
   putHelpful: (req, res) => {

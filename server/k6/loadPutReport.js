@@ -17,9 +17,9 @@ const getRandID = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-/* -----------------------------------------------------------------------------
-Testing API call to /api/reivews/:review_id on random indexes for entire dataset
------------------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------------------
+Testing API call to /api/reivews/:review_id/report on random indexes for entire dataset
+------------------------------------------------------------------------------------- */
 let reviewID = 1;
 
 export default function () {

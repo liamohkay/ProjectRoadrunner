@@ -3,7 +3,6 @@ Import config + dependencies
 ------------------------- */
 const db = require('../db/index.js');
 const mongoose = require('mongoose');
-const DataFrame = require('dataframe-js').DataFrame;
 const { Connection, Characteristic, Review } = db;
 
 /* -------------
@@ -101,17 +100,15 @@ module.exports = {
 
   // Posts a new review to the reviews collection
   postReview: (req, res) => {
-    Review.find({}).lean().sort({ review_id: -1 }).limit(1).select('review_id -_id')
+    Review.count()
     .then(id => {
-        id.map(val => {
-          let body = req.body;
-          body.review_id = val.review_id + 1;
-          let newReview = new Review(body);
-          newReview.save()
-            .catch(err => res.status(400).send(err))
-            .then(() => res.status(200).send())
-        });
-      });
+      let body = req.body;
+      body.review_id = id + 1;
+      let newReview = new Review(body);
+      newReview.save()
+        .catch(err => res.status(400).send(err))
+        .then(() => res.status(200).send())
+    });
   },
 
   // Increments the helpfulness score of a specific review_id

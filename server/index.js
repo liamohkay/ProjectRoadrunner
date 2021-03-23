@@ -1,30 +1,24 @@
-const express = require('express');
+const port = 3000;
+const path = require('path');
 const cors = require('cors');
 const morgan = require('morgan');
-const path = require('path');
-const app = express();
-const PORT = 3000;
+const express = require('express');
 const bodyParser = require('body-parser');
-const reviewsController = require('./reviews/controller.js');
-// const sharedController = require('./shared/controller.js');
-// const cartController = require('./cart/controller.js');
-// const questionsController = require('./qa/controller.js');
-// const interactionsController = require('./interactions/controller.js');
+const controllers = require('./controllers.js');
 
+const app = express()
+  .use(cors())
+  .use(morgan('dev'))
+  .use(bodyParser.json())
+  .use(bodyParser.urlencoded({ extended: true }))
+  .use(express.static(path.join(__dirname, '../../../react-client/dist/')));
 
+/* -------
+API Routes
+------- */
+app.get('/api/reviews', controllers.getReview);
+app.get('/api/reviews/meta', controllers.getMeta);
+app.post('/api/reviews', controllers.postReview);
+app.put('/api/reviews/:review_id/helpful', controllers.putHelpful);
 
-app.use(cors());
-app.use(morgan('dev'));
-app.use(bodyParser.json());
-app.use('/api/reviews', reviewsController);
-// app.use('/api/shared', sharedController);
-// app.use('/api/cart', cartController);
-// app.use('/api/qa', questionsController)
-// app.use('/api/interactions', interactionsController);
-
-app.use(express.static(path.join(__dirname + '/../react-client/dist')));
-
-
-app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
-
-module.exports = app;
+app.listen(port, () => console.log(`Listening on port: ${port}`));

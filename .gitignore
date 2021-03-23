@@ -1,7 +1,3 @@
-.vscode
 node_modules
-RatingsReviews/db/data
-RatingsReviews/server/config.js
-RatingsReviews/server/k6/output
-react-client/dist/bundle.js
-config.js
+db/data
+server/k6/output

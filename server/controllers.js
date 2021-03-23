@@ -117,6 +117,13 @@ module.exports = {
     Review.findOneAndUpdate({ review_id: Number(review_id) }, {$inc: {'helpfulness': 1}})
       .catch(err => res.status(400).send(err))
       .then(() => res.status(204).send())
+  },
+
+  putReport: (req, res) => {
+    const { review_id } = req.params
+    Review.findOneAndUpdate({ review_id: Number(review_id) }, { reported: true })
+      .catch(err => res.status(400).send(err))
+      .then(() => res.status(204).send())
   }
 
 }

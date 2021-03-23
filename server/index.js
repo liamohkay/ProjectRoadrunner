@@ -20,5 +20,6 @@ app.get('/api/reviews', controllers.getReview);
 app.get('/api/reviews/meta', controllers.getMeta);
 app.post('/api/reviews', controllers.postReview);
 app.put('/api/reviews/:review_id/helpful', controllers.putHelpful);
+app.put('/api/reviews/:review_id/report', controllers.putReport);
 
 app.listen(port, () => console.log(`Listening on port: ${port}`));

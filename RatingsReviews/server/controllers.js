@@ -101,18 +101,22 @@ module.exports = {
 
   // Posts a new review to the reviews collection
   postReview: (req, res) => {
-    let newReview = new Review(req.body);
-    newReview.save()
-      .catch(err => res.status(400).send(err))
-      .then(() => res.status(200).send())
+    Review.find({}).lean().sort({ review_id: -1 }).limit(1).select('review_id -_id')
+    .then(id => {
+        id.map(val => {
+          let body = req.body;
+          body.review_id = val.review_id + 1;
+          let newReview = new Review(body);
+          newReview.save()
+            .catch(err => res.status(400).send(err))
+            .then(() => res.status(200).send())
+        });
+      });
   },
 
   // Increments the helpfulness score of a specific review_id
   putHelpful: (req, res) => {
     const { review_id } = req.params
-    Review.find({ review_id: Number(review_id) })
-      .then(data => console.log(data))
-      .catch(err => console.log(err))
     Review.findOneAndUpdate({ review_id: Number(review_id) }, {$inc: {'helpfulness': 1}})
       .catch(err => res.status(400).send(err))
       .then(() => res.status(204).send())

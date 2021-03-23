@@ -3,42 +3,10 @@ Dependencies + Libraries
 --------------------- */
 const fs = require('fs');
 const byline = require('byline');
+const db = require('./index.js');
 const mongoose = require('mongoose');
-mongoose.connect(`mongodb://localhost/SDC`, { poolSize: 10, bufferMaxEntries: 0, useNewUrlParser: true, useUnifiedTopology: true });
-
-/* -------------
-Mongoose Schemas
-------------- */
-const reviewSchema = mongoose.Schema({
-  id: Number,
-  product_id: String,
-  rating: Number,
-  date: String,
-  summary: String,
-  body: String,
-  recommend: Boolean,
-  reported: Boolean,
-  reviewer_name: String,
-  reviewer_email: String,
-  response: String,
-  helpfulness: Number
-});
-const Review = mongoose.model('Review', reviewSchema);
-
-const photoSchema = mongoose.Schema({
-  photo_id: String,
-  review_id: String,
-  url: String
-});
-const Photo = mongoose.model('Photo', photoSchema);
-
-// Helper function that creates obj for mongo collection instance
-const getRowObj = (row, schema, Class) => {
-  row = row.toString('utf-8').split(',');
-  let instance = {};
-  Object.keys(Object.values(schema)[0]).map((key, i) => instance[key] = row[i]);
-  return instance;
-}
+const Photo = db.Photo;
+const Review = db.Review;
 
 /* --------------------------------------------------------------
 Read in review CSV data and upload to database w/ embedded photos

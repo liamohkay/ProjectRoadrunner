@@ -27,7 +27,7 @@ const charSchema = mongoose.Schema({
   characteristic_id: Number,
   product_id: String,
   name: String,
-  characteristicReviews: []
+  characteristicReviews: [charReviewSchema]
 });
 const photoSchema = mongoose.Schema({
   photo_id: Number,
@@ -47,7 +47,7 @@ const reviewSchema = mongoose.Schema({
   reviewer_email: String,
   response: String,
   helpfulness: Number,
-  photos: []
+  photos: [photoSchema]
 });
 
 const CharacteristicReview = mongoose.model('CharacteristicReview', charReviewSchema);

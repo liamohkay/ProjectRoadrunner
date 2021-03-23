@@ -1,12 +1,12 @@
 {
-  "name": "project-catwalk",
+  "name": "SDC",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon RatingsReviews/server/index.js"
+    "start": "nodemon server/index.js"
   },
-  "author": "SDC - LOK",
+  "author": "Liam Olson-Kenny",
   "license": "ISC",
   "devDependencies": {},
   "dependencies": {

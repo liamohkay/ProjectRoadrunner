@@ -3,7 +3,6 @@ Import config + dependencies
 ------------------------- */
 const db = require('../db/index.js');
 const mongoose = require('mongoose');
-const DataFrame = require('dataframe-js').DataFrame;
 const { Connection, Characteristic, Review } = db;
 
 /* -------------

@@ -19,24 +19,24 @@ Database Schemas & Models
 ---------------------- */
 const charReviewSchema = mongoose.Schema({
   id: Number,
-  characteristic_id: { type: Number, required: true, index: true },
+  characteristic_id: { type: Number, sparse: true },
   review_id: Number,
   value: Number,
 });
 const charSchema = mongoose.Schema({
-  characteristic_id: { type: Number, required: true, index: true },
-  product_id: { type: String, required: true, index: true },
+  characteristic_id: { type: Number, sparse: true },
+  product_id: { type: String, sparse: true },
   name: String,
   characteristicReviews: [charReviewSchema]
 });
 const photoSchema = mongoose.Schema({
   photo_id: Number,
-  review_id: { type: Number, required: true, index: true },
+  review_id: { type: Number, sparse: true },
   url: String
 });
 const reviewSchema = mongoose.Schema({
-  review_id:  { type: Number, required: true, index: true },
-  product_id: { type: String, required: true, index: true },
+  review_id: { type: Number, sparse: true },
+  product_id: { type: String, sparse: true },
   rating: Number,
   date: String,
   summary: String,

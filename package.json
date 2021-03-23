@@ -4,7 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon server/index.js"
+    "start": "nodemon server/index.js",
+    "stressGetMeta": "k6 run server/k6/stressGetMeta.js",
+    "stressGetReview": "k6 run server/k6/stressGetReview.js",
+    "stressPostReview": "k6 run server/k6/stressPostReview.js",
+    "stressPutHelpful": "k6 run server/k6/stressPutHelpful.js"
   },
   "author": "Liam Olson-Kenny",
   "license": "ISC",

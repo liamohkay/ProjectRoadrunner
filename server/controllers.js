@@ -99,36 +99,39 @@ module.exports = {
   },
 
   // Posts a new review to the reviews collection
-  // postReview: (req, res) => {
-  //   Review.count()
-  //   .then(id => {
-  //     let body = req.body;
-  //     body.review_id = id + 1;
+  postReview: (req, res) => {
+    Review.count()
+    .then(id => {
+      let body = req.body;
+      let characteristics = body.characteristics;
+      delete body.characteristics;
+      body.review_id = id + 1;
 
-  //     // Parse out individual character reviews for embedded insert
-  //     let charReviews = [];
-  //     for (charID in body.characteristics) {
-  //       let charReview = {
-  //         id = Number(charID),
-  //         characteristic_id: Number(charID),
-  //         review_id: id + 1,
-  //         value: body.characteristics[charID]
-  //       };
-  //       charReviews.push(charReview);
-  //     }
+      // Parse out individual character reviews for embedded insert
+      let charBulk = Characteristic.collection.initializeUnorderedBulkOp();
+      for (charID in characteristics) {
+      charBulk.find({ characteristic_id: Number(charID) }).update({
+          $push: { characteristicReviews: {
+            id: Number(charID),
+            characteristic_id: Number(charID),
+            review_id: id + 1,
+            value: characteristics[charID]
+          }}
+        });
+      }
 
-  //     let charBody = {}
-  //     let newMeta = new Characteristic(body);
-
-  //     // Parse out individual character reviews for embedded insert
-  //     let photos = [];
-
-  //     let newReview = new Review(body);
-  //     newReview.save()
-  //       .catch(err => res.status(400).send(err))
-  //       .then(() => res.status(200).send())
-  //   });
-  // },
+      // Insert char reviews & create new review as well
+      charBulk.execute()
+        .catch(err => res.status(400).send(err))
+        .then(() => {
+          let newReview = new Review(body);
+          console.log(body);
+          newReview.save()
+            .catch(err => res.status(400).send(err))
+            .then(() => res.status(200).send())
+        });
+    });
+  },
 
   // Increments the helpfulness score of a specific review_id
   putHelpful: (req, res) => {

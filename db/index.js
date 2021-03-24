@@ -58,7 +58,7 @@ const reviewSchema = mongoose.Schema({
 });
 
 const CharacteristicReview = mongoose.model('CharacteristicReview', charReviewSchema);
-const Characteristic = mongoose.model('test', charSchema);
+const Characteristic = mongoose.model('Characteristic', charSchema);
 const Photo = mongoose.model('Photo', photoSchema);
 const Review = mongoose.model('Review', reviewSchema);
 

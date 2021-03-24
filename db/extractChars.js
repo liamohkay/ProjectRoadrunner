@@ -20,37 +20,35 @@ db.Connection.on('open', (err, conn) => {
 
   charStream
     .on('error', (err) => console.log(err))
-    .on('data', async (row) => {
+    .on('data', (row) => {
+      counter++;
       row = row.toString('utf-8').split(',');
-      if (row[0] !== 'id') {
-        charStream.pause();
-        await CharacteristicReview.find({ characteristic_id: row[0] })
-          .lean()
-          .catch(err => console.log(err))
-          .then(data => {
-            bulk.insert({
-              characteristic_id: Number(row[0]),
-              product_id: row[1],
-              name: row[2].replace(/["]/g, ''),
-              characteristicReviews: data
-            });
 
-            bulk.execute((err, result) => {
-              if (err) console.log(err.writeErrors[0]);
-              bulk = Characteristic.collection.initializeUnorderedBulkOp();
-              counter++;
-              if (counter % 100000 === 0) console.log(counter);
-              charStream.resume();
-            });
-          })
-        }
+      bulk.insert({
+        characteristic_id: Number(row[0]),
+        product_id: row[1],
+        name: row[2].replace(/["]/g, '')
+      });
+
+      if (counter % 1000000 === 0) {
+        console.log(counter);
+      } else if (counter % 1000 === 0) {
+        charStream.pause();
+        bulk.execute((err, result) => {
+          if (err) console.log(err);
+          bulk = Characteristic.collection.initializeUnorderedBulkOp();;
+          charStream.resume();
+        });
+      }
     })
     .on('end', () => {
-      bulk.execute((err, result) => {
-        if (err) console.log(err);
-        console.log("Completed characteristic collection");
-        console.timeEnd('characteristics');
-        db.Connection.close();
-      })
-    })
+      if (counter % 1000 != 0) {
+        bulk.execute((err, result) => {
+          if (err) console.log(err);
+          console.log("Completed characteristic collection");
+          console.timeEnd('characteristics');
+          db.Connection.close();
+        });
+      }
+    });
 })

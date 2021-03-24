@@ -58,9 +58,9 @@ const reviewSchema = mongoose.Schema({
 });
 
 const CharacteristicReview = mongoose.model('CharacteristicReview', charReviewSchema);
-const Characteristic = mongoose.model('Characteristic', charSchema);
+const Characteristic = mongoose.model('test', charSchema);
 const Photo = mongoose.model('Photo', photoSchema);
-const Review = mongoose.model('test', reviewSchema);
+const Review = mongoose.model('Review', reviewSchema);
 
 module.exports = {
   Connection: connection,

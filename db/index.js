@@ -3,7 +3,14 @@ Connect to DB
 ---------- */
 const port = 27017;
 const mongoose = require('mongoose');
-mongoose.connect(`mongodb://localhost/SDC`, {
+// mongoose.connect(`mongodb://liam:password@54.183.165.57/SDC`, {
+//   poolSize: 10,
+//   bufferMaxEntries: 0,
+//   useNewUrlParser:
+//   true,
+//   useUnifiedTopology: true
+// });
+mongoose.connect(`mongodb://localhost:27017/SDC`, {
   poolSize: 10,
   bufferMaxEntries: 0,
   useNewUrlParser:
@@ -53,7 +60,7 @@ const reviewSchema = mongoose.Schema({
 const CharacteristicReview = mongoose.model('CharacteristicReview', charReviewSchema);
 const Characteristic = mongoose.model('Characteristic', charSchema);
 const Photo = mongoose.model('Photo', photoSchema);
-const Review = mongoose.model('Review', reviewSchema);
+const Review = mongoose.model('test', reviewSchema);
 
 module.exports = {
   Connection: connection,

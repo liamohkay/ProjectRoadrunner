@@ -14,6 +14,7 @@ Extract, transform, load characteristics CSV & embed reveiews
 let charStream = byline(fs.createReadStream('./data/characteristics.csv', { encoding: 'utf8' }))
 
 db.Connection.on('open', (err, conn) => {
+  counter = 0;
   console.time('characteristics');
   let bulk = Characteristic.collection.initializeUnorderedBulkOp();
 
@@ -37,6 +38,8 @@ db.Connection.on('open', (err, conn) => {
             bulk.execute((err, result) => {
               if (err) console.log(err.writeErrors[0]);
               bulk = Characteristic.collection.initializeUnorderedBulkOp();
+              counter++;
+              if (counter % 100000 === 0) console.log(counter);
               charStream.resume();
             });
           })

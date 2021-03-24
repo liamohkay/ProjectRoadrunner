@@ -99,17 +99,36 @@ module.exports = {
   },
 
   // Posts a new review to the reviews collection
-  postReview: (req, res) => {
-    Review.count()
-    .then(id => {
-      let body = req.body;
-      body.review_id = id + 1;
-      let newReview = new Review(body);
-      newReview.save()
-        .catch(err => res.status(400).send(err))
-        .then(() => res.status(200).send())
-    });
-  },
+  // postReview: (req, res) => {
+  //   Review.count()
+  //   .then(id => {
+  //     let body = req.body;
+  //     body.review_id = id + 1;
+
+  //     // Parse out individual character reviews for embedded insert
+  //     let charReviews = [];
+  //     for (charID in body.characteristics) {
+  //       let charReview = {
+  //         id = Number(charID),
+  //         characteristic_id: Number(charID),
+  //         review_id: id + 1,
+  //         value: body.characteristics[charID]
+  //       };
+  //       charReviews.push(charReview);
+  //     }
+
+  //     let charBody = {}
+  //     let newMeta = new Characteristic(body);
+
+  //     // Parse out individual character reviews for embedded insert
+  //     let photos = [];
+
+  //     let newReview = new Review(body);
+  //     newReview.save()
+  //       .catch(err => res.status(400).send(err))
+  //       .then(() => res.status(200).send())
+  //   });
+  // },
 
   // Increments the helpfulness score of a specific review_id
   putHelpful: (req, res) => {

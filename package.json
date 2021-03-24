@@ -10,7 +10,6 @@
     "stressPostReview": "k6 run server/k6/stressPostReview.js",
     "stressPutHelpful": "k6 run server/k6/stressPutHelpful.js",
     "stressPutReport": "k6 run server/k6/stressPutReport.js"
-
   },
   "author": "Liam Olson-Kenny",
   "license": "ISC",

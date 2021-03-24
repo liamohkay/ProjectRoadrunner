@@ -25,7 +25,7 @@ mongoose.connection.on('open', err => {
       counter++;
       row = row.toString('utf-8').split(',');
 
-      bulk.find({ characteristic_id: Number(row[0]) }).upsert().update({
+      bulk.find({ characteristic_id: Number(row[1]) }).upsert().update({
         $push: {characteristicReviews: {
           id: Number(row[0]),
           characteristic_id: Number(row[1]),

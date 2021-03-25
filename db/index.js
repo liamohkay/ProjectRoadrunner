@@ -3,14 +3,20 @@ Connect to DB
 ---------- */
 const port = 27017;
 const mongoose = require('mongoose');
-// mongodb://localhost:27017/SDC
-mongoose.connect(`mongodb://liam:password@54.183.165.57/SDC`, {
+mongoose.connect(`mongodb://liam:password@54.193.94.166/SDC`, {
   poolSize: 10,
   bufferMaxEntries: 0,
   useNewUrlParser:
   true,
   useUnifiedTopology: true
 });
+// mongoose.connect(`mongodb://localhost:27017/SDC`, {
+//   poolSize: 10,
+//   bufferMaxEntries: 0,
+//   useNewUrlParser:
+//   true,
+//   useUnifiedTopology: true
+// });
 const connection = mongoose.connection
   .once('open', () => console.log(`SUCCESS: Connected to db on port: ${port}`))
   .on('error', () => console.log(`FAILED: Can't connect to db on port: ${port}`));

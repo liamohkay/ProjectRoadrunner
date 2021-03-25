@@ -4,7 +4,6 @@ Import config + dependencies
 const db = require('../db/index.js');
 const mongoose = require('mongoose');
 const { Connection, Characteristic, Review } = db;
-
 /* -------------
 Helper Functions
 ------------- */

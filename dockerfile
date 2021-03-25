@@ -1,7 +1,7 @@
 FROM node:lts-alpine3.10
-RUN mkdir /server
-ADD . /server
-WORKDIR /server
+WORKDIR /usr/app
+COPY package*.json ./
 RUN npm install
+COPY . .
 EXPOSE 3000
-RUN npm start
+CMD ["node", "server/index.js"]

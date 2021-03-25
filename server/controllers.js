@@ -52,7 +52,7 @@ Controllers
 -------- */
 module.exports = {
 
-  getLoaderIO: (req, res) => res.send('lloaderio-0948ca3d8f40c75f67d90a6830f7b2fd'),
+  getLoaderIO: (req, res) => res.send('loaderio-0948ca3d8f40c75f67d90a6830f7b2fd'),
 
   // Retreives reviews for a specific product_id
   getReview: (req, res) => {

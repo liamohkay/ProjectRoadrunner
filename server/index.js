@@ -11,7 +11,6 @@ const app = express()
   .use(morgan('dev'))
   .use(bodyParser.json())
   .use(bodyParser.urlencoded({ extended: true }))
-  .use(express.static(path.join(__dirname, '../../../react-client/dist/')));
 
 /* -------
 API Routes
@@ -21,5 +20,6 @@ app.get('/api/reviews/meta', controllers.getMeta);
 app.post('/api/reviews', controllers.postReview);
 app.put('/api/reviews/:review_id/helpful', controllers.putHelpful);
 app.put('/api/reviews/:review_id/report', controllers.putReport);
+app.get('/loaderio-65b4bb81941ca24ab81cd14292158105', controllers.getLoaderIO);
 
 app.listen(port, () => console.log(`Listening on port: ${port}`));

@@ -4,6 +4,7 @@ Import config + dependencies
 const db = require('../db/index.js');
 const mongoose = require('mongoose');
 const { Connection, Characteristic, Review } = db;
+
 /* -------------
 Helper Functions
 ------------- */
@@ -50,6 +51,8 @@ const getRatingsRecommended = data => {
 Controllers
 -------- */
 module.exports = {
+
+  getLoaderIO: (req, res) => res.send('loaderio-65b4bb81941ca24ab81cd14292158105'),
 
   // Retreives reviews for a specific product_id
   getReview: (req, res) => {

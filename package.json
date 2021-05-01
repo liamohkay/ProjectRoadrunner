@@ -5,6 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon server/index.js",
+    "extractCharReviews": "node db/extractCharReviews.js",
+    "extractChars": "node db/extractChars.js",
+    "extractPhotos": "node db/extractPhotos.js",
+    "extractReviews": "node db/extractReviews.js",
     "stressGetMeta": "k6 run server/k6/stressGetMeta.js",
     "stressGetReview": "k6 run server/k6/stressGetReview.js",
     "stressPostReview": "k6 run server/k6/stressPostReview.js",

@@ -3,4 +3,3 @@ node_modules
 db/data
 server/k6/output
 sdc-db-ec2.pem
-loaderio-65b4bb81941ca24ab81cd14292158105.txt

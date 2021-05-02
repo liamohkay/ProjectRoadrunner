@@ -32,11 +32,13 @@ Ultimately, choosing MongoDB combined with my [ETL Process](#ETLprocess) resulte
 ### Load Test @ 100 vus for 4min 30s
 - 13 ms mean request duration
 - 100% accuracy
+
 ![](https://i.ibb.co/L8GdtNV/get-Reviews.png)
 
 
 ### Stress Test @ 1000 vus for 30s
 - 683 ms mean request duration
 - 100% accuracy
+
 ![](https://i.ibb.co/K6v6JCc/stress-Get-Reviews.png)
 

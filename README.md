@@ -23,6 +23,20 @@ Before creating an ETL process for the database, I needed choose which type of d
 
 1. The non-uniform nature of the data that the client was expecting.
 2. The document-style / structure of the data the client was expecting.
-3. MongoDB's ability to nest data, which would reduce join's & server-side "per request" operations.
+3. MongoDB's ability to nest data, which would reduce joins & server-side "per request" operations.
 
 ![](https://i.ibb.co/PYwLxN8/SDC-DB.png)
+
+Ultimately, choosing MongoDB combined with my [ETL Process](#ETLprocess) resulted in very performant queries. Below are two K6 outputs from the main Ratings & Review "GET" endpoint. The first graphic is a load test @ 100 vus for 4 minutes 30 seconds, and the second is a stress test @ 1000 vus for 30 seconds.
+
+### Load Test @ 100 vus for 4min 30s
+- 13 ms mean request duration
+- 100% accuracy
+![](https://i.ibb.co/L8GdtNV/get-Reviews.png)
+
+
+### Stress Test @ 1000 vus for 30s
+- 683 ms mean request duration
+- 100% accuracy
+![](https://i.ibb.co/K6v6JCc/stress-Get-Reviews.png)
+

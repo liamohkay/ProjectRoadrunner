@@ -4,6 +4,7 @@
 1. [SQL vs NoSQL](#SQL-vs-NoSQL)
 1. [ETL Process](#ETL-Process)
 1. [Horizontal Scaling with AWS + NGINX](#Horizontal-Scaling-with-AWS-+-NGINX)
+1. [Further Improvements](#Further-Improvements)
 
 # Overview
 Project Roadrunner is a back-end ratings and reviews microservice optimization for a product catalog web application. This repo contains the ETL process for the sample data, the database queries, local K6 testing files, and a docker file to easily deploy servers across AWS instances.
@@ -81,3 +82,10 @@ I did not want to keep deploying instances for a marginal return, and that's whe
 - 100% accuracy
 
 ![](https://i.ibb.co/7vFNkNV/Screen-Shot-2021-05-02-at-7-07-53-PM.png)
+
+# Further Improvements
+There are number of other improvements I would have made further increase the Ratings & Reviews throughput. However I did not implement these changes because measuring improvement would not have been possible due to loader.io's 10,000 RPS limit.
+
+1. Vertical Scaling
+2. HTTP/2
+3. Layer 4 vs Layer 7 Load Balancing

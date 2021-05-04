@@ -68,7 +68,7 @@ Creating an efficient load process for 35 million records was a challenge. Ultim
 1. Readstreams
 2. Unordered Bulk Insert/Upsert
 
-The utilization of csv readstreams & unordered bulk inserts/upserts resulted in the seed time of 35 million records on an AWS EC2 instance to be a litle over an hour.
+The utilization of csv readstreams & unordered bulk inserts/upserts resulted in the seed time of 35 million records on an AWS EC2 instance to be a little over an hour.
 
 # Horizontal Scaling with AWS + NGINX
 After deploying my database and 1 server EC2 instance, I ran an intial loader.io stress test and quickly realized I would need to horizontally scale to handle higher throughput.
